@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@source '../views';
+@source '../js';
+
+/*
+ * Design tokens. Every colour and font in the app is defined here, which
+ * gives Tailwind classes such as `bg-canvas`, `text-ink`, `border-line`,
+ * `bg-brand` and `font-display`.
+ */
+@theme {
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Lexend', 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+
+    --color-canvas: #f4f6f9; /* page background */
+    --color-surface: #ffffff; /* cards, tables, inputs */
+    --color-line: #dde3ea; /* borders and dividers */
+    --color-ink: #152033; /* main text */
+    --color-muted: #566275; /* secondary text */
+
+    --color-brand: #1e4e8c; /* primary actions, links, active navigation */
+    --color-brand-deep: #163b6b; /* hover on primary actions */
+    --color-brand-soft: #e8eff8; /* tinted backgrounds */
+
+    --color-pencil: #f2a33a; /* highlights and focus ring */
+    --color-pencil-soft: #fdf3e2;
+
+    --color-success: #1f7a4d;
+    --color-success-soft: #e3f3ea;
+    --color-warning: #9a5a00;
+    --color-warning-soft: #fdf1dc;
+    --color-danger: #b42318;
+    --color-danger-soft: #fdecea;
+}
+
+@layer base {
+    body {
+        @apply bg-canvas font-sans text-ink antialiased;
+    }
+
+    h1,
+    h2,
+    h3 {
+        @apply font-display;
+        text-wrap: balance;
+    }
+
+    /* One visible focus style for everything that can receive focus. */
+    :focus-visible {
+        outline: 3px solid var(--color-pencil);
+        outline-offset: 2px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        --tw-ring-color: transparent;
+        border-color: var(--color-brand);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    /* Text typed by users: keep line breaks and never widen the page. */
+    .user-text {
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+    }
+
+    .link {
+        @apply font-medium text-brand underline decoration-brand/30 underline-offset-4 hover:decoration-brand;
+    }
+}

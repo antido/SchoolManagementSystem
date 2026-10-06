@@ -1,0 +1,49 @@
+# Runs the code style check, the TypeScript build and the full test suite
+# (with a coverage report) on every push and pull request.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, fileinfo, gd, mbstring, pdo_sqlite, zip
+          coverage: pcov
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Prepare the environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Check code style
+        run: vendor/bin/pint --test
+
+      # Type-checks the React code (tsc) and builds the assets the tests render with.
+      - name: Build the frontend
+        run: npm run build
+
+      # The tests use an in-memory SQLite database (see phpunit.xml). The
+      # coverage report is informational; once a baseline is known, add
+      # --min=<percent> to fail the build when coverage drops.
+      - name: Run the tests
+        run: php artisan test --coverage
